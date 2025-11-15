@@ -41,6 +41,27 @@ async def fetch(client: httpx.AsyncClient, url: str):
         return {"url": url, "error": str(e)}
 
 
+def sync_fetch(client: httpx.Client, url: str):
+    try:
+        response = client.get(url, timeout=15.0)  # Timeout = 15 seconds
+        return {
+            "url": url,
+            "status": response.status_code,
+            "length": len(response.text),
+        }
+    except httpx.RequestError as e:
+        return {"url": url, "error": str(e)}
+
+
+@app.get("/sync-fetch-all")
+def fetch_all():
+    results = []
+    with httpx.Client() as client:
+        for url in urls:
+            results.append(sync_fetch(client, url))
+    return {"results": results}
+
+
 @app.get("/fetch-all")
 async def fetch_all():
     async with httpx.AsyncClient() as client:
