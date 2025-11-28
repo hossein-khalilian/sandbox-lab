@@ -10,7 +10,8 @@ async def say_hello():
 
 async def say_world():
     print("World")
-    await asyncio.sleep(1)  # Non-blocking wait
+    # await asyncio.sleep(1)  # Non-blocking wait
+    await asyncio.to_thread(time.sleep, 1)
     print("World again after 1 second")
 
 
